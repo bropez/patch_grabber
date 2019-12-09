@@ -1,5 +1,6 @@
 *.env
 *.log
 
+__pycache__/
+
 testing/*
-site_info.py
