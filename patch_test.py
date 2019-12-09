@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 from site_info import (
     get_patch_url, get_response, 
-    get_img_url, get_embed
+    get_img_url, get_embed,
+    get_all_patches
 )
 
 
@@ -29,7 +30,7 @@ async def get_patch(ctx, patch_num: str):
 
 @bot.command(name='recent_patch', help="Gets the most recent hard-coded patch for Team Fight Tactics.")
 async def recent_patch(ctx):
-    patch_num = "9.23"
+    patch_num = get_all_patches()[0]
     patch_url = get_patch_url(patch_num)
     image_url = get_img_url(patch_url)
 

@@ -7,6 +7,9 @@ import discord
 patch_url_template = (
     "https://na.leagueoflegends.com/en/news/game-updates/patch/teamfight-tactics-patch-||||-notes"
 )
+patch_list_url = (
+    "https://www.esportstales.com/teamfight-tactics/patch-notes-list"
+)
 
 
 def get_patch_url(raw_patch_num: str):
@@ -36,7 +39,6 @@ def get_img_url(patch_url: str):
     thing2 = thing[0].findAll("a", {"class": a_class})
     thing3 = thing2[0].findAll("img", {"typeof": "foaf:Image"})
     img_url = "https://na.leagueoflegends.com{}".format(thing3[0]['src'])
-    # print(img_url)
 
     return img_url
 
@@ -47,27 +49,30 @@ def get_embed(img_url: str):
 
     return embed
 
-# TODO: maybe use 'https://www.esportstales.com/teamfight-tactics/patch-notes-list'
-#   to find out which patch is the current patch
-def get_text(el):
-    raw = el.text
-    if ' - ' not in raw:
-        return raw.strip()
 
-    patch = raw.split(' - ')[1]
-    patch_num = patch.split(' ')[1].strip()
+    
+def clean_patches(table):
+    patch_list = []
 
-    return patch_num
+    for div in table:
+        if ' - ' not in div.text:
+            continue
+
+        raw = div.text
+        patch = raw.split(' - ')[1]
+        patch_num = patch.split(' ')[1].strip()
+
+        patch_list.append(patch_num)
+
+    return patch_list
 
 
+def get_all_patches():
+    page = requests.get(patch_list_url)
+    table_class = "sqs-block markdown-block sqs-block-markdown"
 
-page = requests.get("https://www.esportstales.com/teamfight-tactics/patch-notes-list")
-table_class = "sqs-block markdown-block sqs-block-markdown"
+    soup = bs(page.text, 'html.parser')
+    table = soup.findAll("div", {"class": table_class})
+    cleaned = clean_patches(table)
 
-soup = bs(page.text, 'html.parser')
-table = soup.findAll("div", {"class": table_class})
-text_only = []
-for div in table:
-    text_only.append(get_text(div))
-
-print(text_only)
+    return cleaned
