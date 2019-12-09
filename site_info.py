@@ -1,6 +1,3 @@
-# TODO: grab picture from current patch link
-#   maybe use <div class="field field-name-field-article-media field-type-file field-label-hidden"
-#   as a starting point
 from bs4 import BeautifulSoup as bs
 import requests
 
@@ -16,7 +13,7 @@ def get_img_url(patch_url):
     thing2 = thing[0].findAll("a", {"class": a_class})
     thing3 = thing2[0].findAll("img", {"typeof": "foaf:Image"})
     img_url = "https://na.leagueoflegends.com{}".format(thing3[0]['src'])
-    print(img_url)
+    # print(img_url)
 
     return img_url
 
