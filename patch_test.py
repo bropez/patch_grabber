@@ -4,11 +4,7 @@ import os
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from site_info import (
-    get_patch_url, get_response, 
-    get_img_url, get_embed,
-    get_all_patches
-)
+from game_handler import recent_patch_controller, get_embed, get_patch_controller
 
 
 load_dotenv()
@@ -18,25 +14,19 @@ bot = commands.Bot(command_prefix='!')
 
 # bot commands
 @bot.command(name='get_patch', help="Gets the patch notes for the patch that is passed in.")
-async def get_patch(ctx, patch_num: str):
-    patch_url = get_patch_url(patch_num)
-    image_url = get_img_url(patch_url)
-
+async def get_patch(ctx, game_name: str, patch_num: str):
+    # TODO: implement a way to differentiate which game for patches
+    image_url, response = get_patch_controller(game_name, patch_num).split("||||")
     embed = get_embed(image_url)
 
-    response = get_response(patch_num, patch_url)
     await ctx.send(response, embed=embed)
 
 
 @bot.command(name='recent_patch', help="Gets the most recent hard-coded patch for Team Fight Tactics.")
-async def recent_patch(ctx):
-    patch_num = get_all_patches()[0]
-    patch_url = get_patch_url(patch_num)
-    image_url = get_img_url(patch_url)
-
+async def recent_patch(ctx, game_name: str):
+    image_url, response = recent_patch_controller(game_name).split("||||")
     embed = get_embed(image_url)
-    
-    response = get_response(patch_num, patch_url)
+
     await ctx.send(response, embed=embed)
 
 bot.run(token)

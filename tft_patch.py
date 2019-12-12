@@ -35,23 +35,16 @@ def get_img_url(patch_url: str):
     a_class = "lightbox cboxElement"
 
     soup = bs(page.text, 'html.parser')
-    thing = soup.findAll("div", {"class": div_class})
-    thing2 = thing[0].findAll("a", {"class": a_class})
-    thing3 = thing2[0].findAll("img", {"typeof": "foaf:Image"})
-    img_url = "https://na.leagueoflegends.com{}".format(thing3[0]['src'])
+    divs = soup.findAll("div", {"class": div_class})[0]
+    links = divs.findAll("a", {"class": a_class})[0]
+    imgs = links.findAll("img", {"typeof": "foaf:Image"})
+    img_url = "https://na.leagueoflegends.com{}".format(imgs[0]['src'])
 
     return img_url
-
-
-def get_embed(img_url: str):
-    embed = discord.Embed()
-    embed.set_image(url=img_url)
-
-    return embed
-
-
+    
     
 def clean_patches(table):
+    # TODO: check which game to work with and clean that patch list
     patch_list = []
 
     for div in table:
@@ -68,11 +61,35 @@ def clean_patches(table):
 
 
 def get_all_patches():
+    # TODO: pass in the table_class to work with other games
     page = requests.get(patch_list_url)
     table_class = "sqs-block markdown-block sqs-block-markdown"
 
     soup = bs(page.text, 'html.parser')
-    table = soup.findAll("div", {"class": table_class})
+    table = soup.findAll("div", {"class": table_class})[0]
     cleaned = clean_patches(table)
 
     return cleaned
+
+
+def tft_rp():
+    patch_num = get_all_patches()[0]
+    patch_url = get_patch_url(patch_num)
+    image_url = get_img_url(patch_url)
+    
+    response = get_response(patch_num, patch_url)
+
+    ret_str = image_url + "||||" + response
+
+    return ret_str
+
+
+def tft_gp(patch_num: str):
+    patch_url = get_patch_url(patch_num)
+    image_url = get_img_url(patch_url)
+
+    response = get_response(patch_num, patch_url)
+
+    ret_str = image_url + "||||" + response
+
+    return ret_str
