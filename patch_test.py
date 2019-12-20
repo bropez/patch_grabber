@@ -15,8 +15,7 @@ bot = commands.Bot(command_prefix='!')
 # bot commands
 @bot.command(name='get_patch', help="Gets the patch notes for the patch that is passed in.")
 async def get_patch(ctx, game_name: str, patch_num: str):
-    # TODO: implement a way to differentiate which game for patches
-    image_url, response = get_patch_controller(game_name, patch_num).split("||||")
+    image_url, response = get_patch_controller(game_name, patch_num).split("<splitter>")
     embed = get_embed(image_url)
 
     await ctx.send(response, embed=embed)
@@ -24,7 +23,7 @@ async def get_patch(ctx, game_name: str, patch_num: str):
 
 @bot.command(name='recent_patch', help="Gets the most recent hard-coded patch for Team Fight Tactics.")
 async def recent_patch(ctx, game_name: str):
-    image_url, response = recent_patch_controller(game_name).split("||||")
+    image_url, response = recent_patch_controller(game_name).split("<splitter>")
     embed = get_embed(image_url)
 
     await ctx.send(response, embed=embed)
